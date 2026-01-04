@@ -27,7 +27,7 @@
     "@radix-ui/react-slot": "^1.1.1",
     "@prisma/client": "^6.2.1",
     "next-auth": "^4.24.11",
-    "@auth/prisma-adapter": "^2.7.4",
+    "@next-auth/prisma-adapter": "^1.0.7",
     "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
