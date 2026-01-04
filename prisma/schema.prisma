@@ -1,0 +1,131 @@
+// prisma/schema.prisma
+// 호원앤컴퍼니 홈페이지 데이터베이스 스키마
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+// ==========================================
+// 사용자 (Users)
+// ==========================================
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  name          String?
+  phone         String?
+  password      String?   // 관리자용 해시 비밀번호
+  role          UserRole  @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  consultations Consultation[]
+  posts         Post[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// ==========================================
+// 상담 신청 (Consultations)
+// ==========================================
+model Consultation {
+  id              String              @id @default(cuid())
+  name            String
+  phone           String
+  email           String?
+  company         String?             // 병원/기업명
+  services        String[]            // 선택한 서비스들
+  message         String?             @db.Text
+  privacyConsent  Boolean             @default(false)
+  status          ConsultationStatus  @default(PENDING)
+  memo            String?             @db.Text  // 관리자 메모
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  userId          String?
+  user            User?               @relation(fields: [userId], references: [id])
+
+  @@map("consultations")
+}
+
+enum ConsultationStatus {
+  PENDING     // 대기
+  CONTACTED   // 연락완료
+  CONSULTING  // 상담중
+  COMPLETED   // 완료
+  CANCELLED   // 취소
+}
+
+// ==========================================
+// 게시물 (Posts) - 공지사항, FAQ, 칼럼 통합
+// ==========================================
+model Post {
+  id            String      @id @default(cuid())
+  type          PostType
+  title         String
+  slug          String      @unique
+  content       String      @db.Text
+  excerpt       String?     // 요약 (칼럼용)
+  thumbnail     String?     // 썸네일 URL
+  isPublished   Boolean     @default(false)
+  isPinned      Boolean     @default(false)  // 상단 고정
+  viewCount     Int         @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  authorId      String?
+  author        User?       @relation(fields: [authorId], references: [id])
+
+  @@index([type, isPublished])
+  @@index([slug])
+  @@map("posts")
+}
+
+enum PostType {
+  NOTICE  // 공지사항
+  FAQ     // 자주 묻는 질문
+  COLUMN  // 칼럼
+}
+
+// ==========================================
+// 포트폴리오 (Portfolios)
+// ==========================================
+model Portfolio {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  category      String    // 서비스 카테고리
+  client        String?   // 클라이언트명
+  description   String    @db.Text
+  thumbnail     String?
+  images        String[]  // 이미지 URL 배열
+  isPublished   Boolean   @default(false)
+  order         Int       @default(0)  // 정렬 순서
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([category, isPublished])
+  @@map("portfolios")
+}
+
+// ==========================================
+// 사이트 설정 (Settings)
+// ==========================================
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
