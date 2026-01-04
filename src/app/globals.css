@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Navy Colors */
+  --navy-900: #0F1A34;
+  --navy-800: #1A2744;
+  --navy-700: #1E3A5F;
+  
+  /* CTA Blue */
+  --blue-cta: #4A90D9;
+  --blue-hover: #3D83CB;
+  --blue-active: #376FB6;
+  --blue-link: #5BA3E0;
+  --blue-focus: rgba(74, 144, 217, 0.35);
+  
+  /* Grayscale */
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+}
+
+body {
+  font-family: "Pretendard Variable", Inter, system-ui, -apple-system, "Noto Sans KR", sans-serif;
+  color: var(--gray-800);
+  background-color: #ffffff;
+}
+
+/* Tabular numbers for data display */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Focus ring for accessibility */
+.focus-ring {
+  outline: 2px solid var(--blue-cta);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
