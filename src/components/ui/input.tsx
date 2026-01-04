@@ -1,74 +1,63 @@
-'use client';
+"use client"
 
-import * as React from 'react';
-import { cn } from '@/lib/utils';
+import * as React from "react"
+import { cn } from "@/lib/utils"
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  helperText?: string;
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
+  label?: string
+  error?: string
+  helperText?: string
+  type?: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, helperText, id, ...props }, ref) => {
-    const inputId = id || React.useId();
+  ({ className, label, error, helperText, required, disabled, id, type = "text", ...props }, ref) => {
+    const generatedId = React.useId()
+    const inputId = id || generatedId
+    const errorId = `${inputId}-error`
+    const helperId = `${inputId}-helper`
 
     return (
       <div className="w-full">
         {label && (
-          <label
-            htmlFor={inputId}
-            className="mb-1.5 block text-sm font-medium text-navy-900"
-          >
+          <label htmlFor={inputId} className="mb-2 block text-sm font-medium text-[#1E3A5F]">
             {label}
-            {props.required && (
-              <span className="ml-1 text-red-500">*</span>
-            )}
+            {required && <span className="ml-1 text-[#EF4444]">*</span>}
           </label>
         )}
         <input
-          type={type}
-          id={inputId}
           ref={ref}
+          id={inputId}
+          type={type}
+          disabled={disabled}
+          aria-invalid={error ? "true" : "false"}
+          aria-describedby={error ? errorId : helperText ? helperId : undefined}
           className={cn(
-            'flex h-11 w-full rounded-lg border bg-white px-4 py-2 text-sm text-navy-900 transition-colors',
-            'placeholder:text-gray-400',
-            'focus:outline-none focus:ring-2 focus:ring-cta focus:ring-offset-0',
-            'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50',
-            error
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-cta',
-            className
+            "h-11 w-full rounded-xl border px-4 text-sm transition-all duration-200 outline-none",
+            "bg-white text-[#1E3A5F] placeholder:text-slate-400",
+            "border-[#E2E8F0]",
+            "focus:border-[#4A90D9] focus:ring-4 focus:ring-[rgba(74,144,217,0.35)]",
+            "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400",
+            error && "border-[#EF4444] focus:border-[#EF4444] focus:ring-[rgba(239,68,68,0.2)]",
+            className,
           )}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={
-            error
-              ? `${inputId}-error`
-              : helperText
-                ? `${inputId}-helper`
-                : undefined
-          }
           {...props}
         />
         {error && (
-          <p
-            id={`${inputId}-error`}
-            className="mt-1.5 text-sm text-red-500"
-            role="alert"
-          >
+          <p id={errorId} className="mt-1.5 text-xs text-[#EF4444]">
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p id={`${inputId}-helper`} className="mt-1.5 text-sm text-gray-500">
+          <p id={helperId} className="mt-1.5 text-xs text-slate-500">
             {helperText}
           </p>
         )}
       </div>
-    );
-  }
-);
-Input.displayName = 'Input';
+    )
+  },
+)
 
-export { Input };
+Input.displayName = "Input"
+
+export { Input }
